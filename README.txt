@@ -1,1 +1,0 @@
-Simple loggin app with CodeIgniter for learning 
