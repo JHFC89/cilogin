@@ -1,0 +1,45 @@
+version 1.0 flow
+
+- user access Login/view()
+	- Login/view() loads login.php
+	- login.php create a form to input username and password using form_open()
+- user insert username and password then click submit
+	- login.php form action loads Login/validation()
+	- Login/validation() loads Login_model
+	- Login/validation() loads Login_model/validation_data()
+		- Login_model/__construct() loads database()
+		- Login_model/validation_data() select() the username and password fields from database
+		- Login_model/validation_data() get() the fields above from the 'users' table and store in $query
+		- Login_model/validation_data() return $query as a result_array() as an array with assossiative arrays that contains: 'username' => data, 'password' => data; this will be loaded in a variable by the controller
+	- Login/validation() stores the return_array() from Login_model/validation_data() in $query
+	- Login/validation() stores the input->post() from login.php form which name is 'username' to $username
+	- Login/validation() stores the input->post() from login.php form which name is 'password' to $password
+	- Login/validation() checks if the values of $username matches $query[0]['username'] and $password matches $query[0]['password']
+		- if true
+			- Login/validation() stores $username in $data array as 'username'
+			- Login/validation() stores $password in $data array as 'password'
+			- Login/validation() stores $query[0]['username'] in $data array as 'username_validation'
+			- Login/validation() loads logged.php and $data
+-user access logged.php
+		- if false
+			- Login/validation() redirect() to login.php
+- user access Login/view()
+
+
+--autoload--
+-form_open() needs helper 'form'
+-redirect() needs helper 'url'
+
+
+--comments--
+
+- the goal of this code is to learn how to create a very simple user login
+- the user ir registered direct in the database
+- this code only works if theres only one user in the database, because it checks only the first index of the array sent by the model, which contains only the data of the first user from the database
+- there is no security features
+- there is no validation form features
+
+
+--next step--
+
+- add a feature to enable more than one user
