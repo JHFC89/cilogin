@@ -1,0 +1,50 @@
+version 1.1 flow
+
+- user access Login/view()
+	- Login/view() loads login.php
+	- login.php create a form to input username and password using form_open()
+- user insert username and password then click submit
+	- login.php form action loads Login/validation()
+	- Login/validation() loads Login_model
+	- Login/validation() stores the input->post() from login.php form which name is 'username' to $username
+	- Login/validation() stores the input->post() from login.php form which name is 'password' to $password
+	- Login/validation() loads Login_model/validation_data($username)
+		- Login_model/__construct() loads database()
+		- Login_model/validation_data($username) get_where() stores the specified username´s username and password from the db´s table 'users' in $query
+		- Login_model/validation_data() return $query as a row_array() as an assossiative array that contains: 'username' => db data, 'password' => db data; this will be loaded in a $query by the controller
+	- Login/validation() stores the row_array() from Login_model/validation_data($username) in $query
+
+	- Login/validation() checks if the value $password matches $query['password'] and $password not empty (see comments)
+		- if true
+			- Login/validation() stores $username in $data array as 'username'
+			- Login/validation() stores $password in $data array as 'password'
+			- Login/validation() stores $query['username'] in $data array as 'username_validation'
+			- Login/validation() loads logged.php and $data
+-user access logged.php
+		- if false
+			- Login/validation() redirect() to login.php
+- user access Login/view()
+
+
+--autoload--
+-form_open() needs helper 'form'
+-redirect() needs helper 'url'
+
+
+--comments--
+
+- feature: enable more than one user
+	- inserted the $username parameter to the Login_model/validation_data() and assign it to the $username got by the Login/validation() from the login.php´s form.
+	- that enables to, in the Login_model/validation_data($username), get the username and password´s fields from the table 'users' from the database where the 'username' corresponds to $username sent by Login/validation(). 
+	- this process makes it possible to get the password of different users
+	- the data then is returned using row_array() to make it simplier to access it in Login/validation(), since only the row of the specified user is needed
+	- Login/validation then checks if the inserted password stored in $password matches the password sent by Login_model/validation_data($username)
+
+- it was necessary to check if the $password in Login/validation() was not empty besides checking if it matches the user´s data because it was possible to access logged.php by typing the url 'login/validation'
+
+
+--next step--
+
+- add validation to login.php form
+	- username required
+	- password required

@@ -8,22 +8,21 @@
 
         //validation
         public function validation(){
-
             $this->load->model('login_model');
-            $query = $this->login_model->validation_data(); // load validation_data which contains users data for validation
 
             $username = $this->input->post('username'); //load the data inside the form in the login page with name 'username'
             $password = $this->input->post('password'); //load the data inside the form in the login page with name 'password'
 
-            if($username == $query[0]['username'] && $password == $query[0]['password']){ //check if the inserted username and password matches the data from the model
+            $query = $this->login_model->validation_data($username); //load the model with the username parameter to be get from the db 
 
+            if($password == $query['password'] && $password !=''){ //check if a password was inserted and if the inserted password matches the data from the model 
                 $data['username'] = $username;
                 $data['password'] = $password;
-                $data['username_validation'] = $query[0]['username'];
+                $data['username_validation'] = $query['username'];
     
                 $this->load->view('logged', $data);
+
             } else{
-                
             redirect('login');
             
             }
