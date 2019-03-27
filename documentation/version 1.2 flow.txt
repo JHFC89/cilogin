@@ -1,0 +1,63 @@
+version 1.1 flow
+
+---CLIENT INPUT---
+- user access Login/view()
+	- Login/view() loads login.php
+	- login.php create a form to input username and password using form_open()
+- user insert username and password then click submit
+
+---FORM VALIDATION---
+	- login.php form action loads Login/form_validation()
+		- Login/form_validation() set_rules() for username validation for field required
+		- Login/form_validation() set_rules() for password validation for field required
+		- Login/form_validation() checks if form_validation->run() returns FALSE
+			- if TRUE
+				- Login/form_validation() loads login.php
+	- login.php echo validation_errors()
+			- if FALSE
+				- Login/form_validation() loads Login/validation()
+
+---USER AND PASSWORD VALIDATION---
+	- Login/validation() loads Login_model
+	- Login/validation() stores the input->post() from login.php form which name is 'username' to $username
+	- Login/validation() stores the input->post() from login.php form which name is 'password' to $password
+	- Login/validation() loads Login_model/validation_data($username)
+		- Login_model/__construct() loads database()
+		- Login_model/validation_data($username) get_where() stores the specified username´s username and password from the db´s table 'users' in $query
+		- Login_model/validation_data() return $query as a row_array() as an assossiative array that contains: 'username' => db data, 'password' => db data; this will be loaded in a $query by the controller
+	- Login/validation() stores the row_array() from Login_model/validation_data($username) in $query
+	- Login/validation() checks if the value $password matches $query['password'] and $password not empty (see comments)
+		- if TRUE
+			- Login/validation() stores $username in $data array as 'username'
+			- Login/validation() stores $password in $data array as 'password'
+			- Login/validation() stores $query['username'] in $data array as 'username_validation'
+			- Login/validation() loads logged.php and $data
+-user access logged.php
+		- if FALSE
+			- Login/validation() redirect() to login.php
+- user access Login/view()
+
+
+--autoload--
+-form_open() needs helper 'form'
+-redirect() needs helper 'url'
+-form_validation->set_rules needs library 'form_validation'
+-form_validation->run() needs library 'form_validation'
+-set_value needs library 'form_validation'
+
+
+--comments--
+
+- feature: form validation
+	- created Login/form_validation() and set it in the login.php action instead of Login/validation(), so the form validation runs before and then call the user and password validation
+	- set the error messages to a custom message in pt-br
+	- used set_value('username') inside the value attribute of the form in login.php to repopulate the username field
+
+- it was necessary to check if the $password in Login/validation() was not empty besides checking if it matches the user´s data because it was possible to access logged.php by typing the url 'login/validation'
+
+
+--next step--
+
+- add security to user´s password
+	- encrypt user´s password
+

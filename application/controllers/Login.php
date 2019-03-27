@@ -6,7 +6,19 @@
             $this->load->view('login');
         }
 
-        //validation
+        //form validation
+        public function form_validation(){
+            $this->form_validation->set_rules('username', 'Username', 'required', array('required' => 'O campo {field} é obrigatório.'));
+            $this->form_validation->set_rules('password', 'Password', 'required', array('required' =>'O campo {field} é obrigatório.'));
+
+            if ($this->form_validation->run() == FALSE){
+                $this->load->view('login'); //send back to login.php if form validation fail
+            } else{
+                $this->validation(); //call Login/validation() if form validation successed
+            }
+        }
+
+        //user and password validation
         public function validation(){
             $this->load->model('login_model');
 
@@ -23,11 +35,8 @@
                 $this->load->view('logged', $data);
 
             } else{
-            redirect('login');
-            
+                redirect('login');           
             }
-
-        // this code only works if theres only one user in the database, because it checks only the index[0] (line 18) of the $query, which contains only the data of the first user from the database    
         }
     }
     
